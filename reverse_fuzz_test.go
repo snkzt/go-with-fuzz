@@ -14,8 +14,18 @@ func FuzzReverse(f *testing.F) {
     f.Add(tc)  // Use f.Add to provide a seed corpus
   }
   f.Fuzz(func(t *testing.T, original string) {
-    reverse := Reverse(original)
-    doubleReverse := Reverse(reverse)
+    // The fuzz test will run until it encounters a failing input
+    // unless it passes the -fuzztime flag.
+    // The default is to run forever if no failures occur. (Ctrl+C to stop)
+    // go test -fuzz=Fuzz  
+    reverse, err1 := Reverse(original)
+    if err1 != nil {
+      return
+    }
+    doubleReverse, err2 := Reverse(reverse)
+    if err2 != nil {
+      return
+    }
     // In fuzzing, you cannot predict expected output,
     // since no control over inputs but can check the existing
     // facts as below.
